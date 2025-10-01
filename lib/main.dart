@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'pages/login_page.dart';
+import 'package:grocery_shop/auth/login_or_register.dart';
 
 
 void main() {
@@ -15,9 +15,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(),
-      home: LoginPage(
-        onTap: () {},
-      ),
+      home: const LoginOrRegister(),
     );
   }
 }
