@@ -1,6 +1,7 @@
 
-import package:flutter/material.dart';
-import 'Aladin/themes/light_mode.dart';
+import 'package:flutter/material.dart';
+import 'package:grocery_shop/themes/light_mode.dart';
+import 'package:grocery_shop/themes/dark_mode.dart';
 
 class ThemeProvider with ChangeNotifier {
   ThemeData _themeData = lightMode;
@@ -11,9 +12,8 @@ class ThemeProvider with ChangeNotifier {
     _themeData = theme;
     notifyListeners();
   }
-}
 
-void toggleTheme() {
+  void toggleTheme() {
   if (_themeData == lightMode) {
     _themeData = darkMode;
   } else {
@@ -21,4 +21,7 @@ void toggleTheme() {
   }
   notifyListeners();
 }
+}
+
+
 
