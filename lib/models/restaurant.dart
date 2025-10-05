@@ -1,0 +1,74 @@
+import 'food.dart';
+
+class Restaurant {
+  final String imagePath;
+  final String address;
+  final double rating;
+  final List<Food> menu;
+
+  // A sample menu used when no menu is provided.
+  static final List<Food> sampleMenu = [
+    Food(
+      name: 'Classic Cheeseburger',
+      imagePath: 'assets/images/burger1.jpg',
+      description: 'A delicious cheese burger with fresh ingredients.',
+      price: 0.99,
+      category: FoodCategory.burger,
+      addons: [
+        Addon(name: 'Extra Cheese', price: 0.99),
+        Addon(name: 'Bacon', price: 1.49),
+      ],
+    ),
+    Food(
+      name: 'Caesar Salad',
+      imagePath: 'assets/images/salad1.jpg',
+      description: 'Crisp romaine lettuce with Caesar dressing and croutons.',
+      price: 4.99,
+      category: FoodCategory.salads,
+      addons: [
+        Addon(name: 'Grilled Chicken', price: 2.99),
+        Addon(name: 'Avocado', price: 1.49),
+      ],
+    ),
+    Food(
+      name: 'French Fries',
+      imagePath: 'assets/images/fries1.jpg',
+      description: 'Golden and crispy french fries.',
+      price: 2.99,
+      category: FoodCategory.sides,
+      addons: [
+        Addon(name: 'Cheese Sauce', price: 0.99),
+        Addon(name: 'Chili', price: 1.49),
+      ],
+    ),
+    Food(
+      name: 'Chocolate Cake',
+      imagePath: 'assets/images/dessert1.jpg',
+      description: 'Rich and moist chocolate cake slice.',
+      price: 3.99,
+      category: FoodCategory.desserts,
+      addons: [
+        Addon(name: 'Whipped Cream', price: 0.49),
+        Addon(name: 'Ice Cream Scoop', price: 1.49),
+      ],
+    ),
+    Food(
+      name: 'Lemonade',
+      imagePath: 'assets/images/drink1.jpg',
+      description: 'Refreshing homemade lemonade.',
+      price: 1.99,
+      category: FoodCategory.drinks,
+      addons: [
+        Addon(name: 'Mint Leaves', price: 0.29),
+        Addon(name: 'Extra Ice', price: 0.00),
+      ],
+    ),
+  ];
+
+  Restaurant({
+    required this.imagePath,
+    required this.address,
+    required this.rating,
+    List<Food>? menu,
+  }) : menu = menu ?? sampleMenu;
+}
