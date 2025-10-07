@@ -21,3 +21,5 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
+// Register page created
