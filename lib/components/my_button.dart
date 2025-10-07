@@ -18,7 +18,7 @@ class MyButton extends StatelessWidget {
         padding: const EdgeInsets.all(15),
         margin: const EdgeInsets.symmetric(horizontal: 25),
         decoration: BoxDecoration(
-          color: Colors.grey,            /* After theme's added -> theme.of(context).colorScheme.secondary */
+          color: Theme.of(context).colorScheme.secondary,            /* After theme's added ->  */
           borderRadius: BorderRadius.circular(8),
         ), 
         child: Center(
@@ -26,7 +26,7 @@ class MyButton extends StatelessWidget {
             text,
             style: TextStyle(
               fontWeight: FontWeight.bold,
-              color: Colors.green,      /* After theme's added -> theme.of(context).colorScheme.inversePrimary */
+              color: Theme.of(context).colorScheme.inversePrimary,      /* After theme's added ->  */
               fontSize: 16,
             ),
           )

@@ -21,13 +21,13 @@ class MyTextfield extends StatelessWidget {
         obscureText: obscureText,
         decoration: InputDecoration(
           enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.black),        /* After theme's added -> theme.of(context).colorScheme.tertiary */
+            borderSide: BorderSide(color: Theme.of(context).colorScheme.tertiary),        /* After theme's added ->  */
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.red), /* After theme's added -> theme.of(context).colorScheme.primary */
+            borderSide: BorderSide(color: Theme.of(context).colorScheme.primary), /* After theme's added ->  */
           ),
           hintText: hintText,
-          hintStyle: TextStyle(color: Colors.blue),  /* After theme's added -> theme.of(context).colorScheme.primary */
+          hintStyle: TextStyle(color: Theme.of(context).colorScheme.primary),  /* After theme's added -> */
         ),
       ),
     );

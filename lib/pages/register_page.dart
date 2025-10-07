@@ -19,10 +19,10 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).colorScheme.background,
 
       /* Change after themes are added */
-      /* Theme.of(context).colorScheme.background */
+      /*  */
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -31,10 +31,10 @@ class _RegisterPageState extends State<RegisterPage> {
             Icon(
               Icons.lock_open_rounded,
               size: 100,
-              color: Colors.black,
+              color: Theme.of(context).colorScheme.inversePrimary,
 
               /* Change after themes are added */
-              /* Theme.of(context).colorScheme.inversePrimary, */
+              /*  */
             ),
 
             const SizedBox(height: 25),
@@ -44,9 +44,9 @@ class _RegisterPageState extends State<RegisterPage> {
               "Create New Account",
               style: TextStyle(
                 fontSize: 16,
-                color: Colors.black,
+                color: Theme.of(context).colorScheme.inversePrimary,
                 /* Change after themes are added */
-                /* Theme.of(context).colorScheme.inversePrimary */
+                /*  */
               ),
             ),
 
@@ -92,22 +92,22 @@ class _RegisterPageState extends State<RegisterPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text("Already have an account?", style: TextStyle(color: Colors.pink)),
+                Text("Already have an account?", style: TextStyle(color: Theme.of(context).colorScheme.inversePrimary)),
                 /* Change after themes are added */
-                /* Theme.of(context).colorScheme.inversePrimary */
+                /*  */
                 const SizedBox(width: 4),
                 GestureDetector(
                   onTap: widget.onTap,
                   child: Text(
                     "Login Now",
                     style: TextStyle(
-                      color: Colors.pink,
+                      color: Theme.of(context).colorScheme.inversePrimary,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
                 /* Change after themes are added */
-                /* Theme.of(context).colorScheme.inversePrimary */
+                /*  */
               ],
             ),
           ],
