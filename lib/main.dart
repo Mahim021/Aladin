@@ -21,5 +21,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
-// 1. Create a login page
