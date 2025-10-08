@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
 import "package:grocery_shop/components/my_drawer_tile.dart";
+import "package:grocery_shop/pages/setting_page.dart";
 
 class MyDrawer extends StatelessWidget {
   const MyDrawer({super.key});
@@ -37,17 +38,15 @@ class MyDrawer extends StatelessWidget {
             icon: Icons.settings,
             onTap: () => {
               Navigator.pop(context),
-              
-
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SettingsPage()),
+              ),
             },
           ),
 
           // logout list tile
-          MyDrawerTile(
-            text: "L O G O U T",
-            icon: Icons.logout,
-            onTap: () {},
-          ),
+          MyDrawerTile(text: "L O G O U T", icon: Icons.logout, onTap: () {}),
         ],
       ),
     );
