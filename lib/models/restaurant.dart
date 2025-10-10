@@ -1,10 +1,13 @@
+import 'package:flutter/material.dart';
 import 'food.dart';
+import 'cart_item.dart';
 
-class Restaurant {
+class Restaurant extends ChangeNotifier {
   final String imagePath;
   final String address;
   final double rating;
   final List<Food> menu;
+  final List<CartItem> cart = [];
 
   // A sample menu used when no menu is provided.
   static final List<Food> sampleMenu = [
@@ -71,4 +74,42 @@ class Restaurant {
     required this.rating,
     List<Food>? menu,
   }) : menu = menu ?? sampleMenu;
+
+  // Add to cart
+  void addToCart(Food food, Map<Addon, bool> selectedAddons) {
+    CartItem newItem = CartItem(
+      food: food,
+      selectedAddons: selectedAddons,
+    );
+    cart.add(newItem);
+    notifyListeners();
+  }
+
+  // Remove from cart
+  void removeFromCart(CartItem cartItem) {
+    cart.remove(cartItem);
+    notifyListeners();
+  }
+
+  // Update cart item quantity
+  void updateQuantity(CartItem cartItem, int newQuantity) {
+    cartItem.quantity = newQuantity;
+    notifyListeners();
+  }
+
+  // Get total price
+  double getTotalPrice() {
+    return cart.fold(0.0, (sum, item) => sum + item.totalPrice);
+  }
+
+  // Get cart item count
+  int getCartItemCount() {
+    return cart.length;
+  }
+
+  // Clear cart
+  void clearCart() {
+    cart.clear();
+    notifyListeners();
+  }
 }
