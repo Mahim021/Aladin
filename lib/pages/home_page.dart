@@ -1,4 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:grocery_shop/components/my_tab_bar.dart';
+import 'package:grocery_shop/components/my_current_location.dart';
+import 'package:grocery_shop/components/my_description_box.dart';
+import 'package:grocery_shop/components/my_drawer.dart';
+import 'package:grocery_shop/components/my_silver_app_bar.dart';
+import 'package:grocery_shop/models/food.dart';
+import 'package:grocery_shop/models/restaurant.dart';
+import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -7,11 +15,88 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage>
+    with SingleTickerProviderStateMixin {
+  // tab controller
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: FoodCategory.values.length, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  List<Food> _filterMenuByCategory(FoodCategory category, List<Food> fullMenu) {
+    return fullMenu.where((food) => food.category == category).toList();
+  }
+
+List<Widget> getFoodInThisCategory(List<Food> fullMenu){
+  return FoodCategory.values.map((category) {
+    final foodsInCategory = _filterMenuByCategory(category, fullMenu);
+    return ListView.builder(
+      itemCount: foodsInCategory.length,
+      itemBuilder: (context, index) {
+        final food = foodsInCategory[index];
+        return ListTile(
+          title: Text(food.name),
+          subtitle: Text('৳${food.price.toStringAsFixed(2)} BDT'),
+          leading: Image.asset(food.imagePath, width: 50, height: 50, fit: BoxFit.cover),
+        );
+      },
+    );
+  }).toList();
+}
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Home")),
-    );
+      backgroundColor: Theme.of(context).colorScheme.secondary,
+      drawer: const MyDrawer(),
+      body: Consumer<Restaurant>(
+        builder: (context, restaurant, child) {
+          return NestedScrollView(
+            headerSliverBuilder: (context, innerBoxIsScrolled) => [
+              MySliverAppBar(
+                title: MyTabBar(tabController: _tabController),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 12),
+                    Divider(
+                      indent: 25,
+                      endIndent: 25,
+                      color: Theme.of(context).colorScheme.secondary,
+                    ), // Divider
+
+                    // switch
+                    MyCurrentLocation(),
+
+                    // description box
+                    const MyDescriptionBox(),
+                    
+                    const SizedBox(height: 60), // Reduced space to prevent icon overlap
+                  ],
+                ), // Column
+              ), // MySliverAppBar
+            ],
+            body: Consumer<Restaurant>(
+              builder: (context, restaurant, child) {
+                return TabBarView(
+                  controller: _tabController,
+                  children: getFoodInThisCategory(restaurant.menu),
+                );
+              },
+            ), // TabBarView
+          ); // NestedScrollView
+        },
+      ), // Consumer
+    ); // Scaffold
   }
+  
 }

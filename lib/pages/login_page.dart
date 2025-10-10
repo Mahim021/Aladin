@@ -38,10 +38,10 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).colorScheme.background,
 
       /* Change after themes are added */
-      /* Theme.of(context).colorScheme.background */
+      /*  */
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -50,10 +50,10 @@ class _LoginPageState extends State<LoginPage> {
             Icon(
               Icons.lock_open_rounded,
               size: 100,
-              color: Colors.black,
+              color: Theme.of(context).colorScheme.inversePrimary,
 
               /* Change after themes are added */
-              /* Theme.of(context).colorScheme.inversePrimary, */
+              /*  */
             ),
 
             const SizedBox(height: 25),
@@ -63,9 +63,9 @@ class _LoginPageState extends State<LoginPage> {
               "Food Delivery App",
               style: TextStyle(
                 fontSize: 16,
-                color: Colors.black,
+                color: Theme.of(context).colorScheme.inversePrimary,
                 /* Change after themes are added */
-                /* Theme.of(context).colorScheme.inversePrimary */
+                /* */
               ),
             ),
 
@@ -100,22 +100,22 @@ class _LoginPageState extends State<LoginPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text("Not a member?", style: TextStyle(color: Colors.pink)),
+                Text("Not a member?", style: TextStyle(color: Theme.of(context).colorScheme.inversePrimary)),
                 /* Change after themes are added */
-                /* Theme.of(context).colorScheme.inversePrimary */
+                /*  */
                 const SizedBox(width: 4),
                 GestureDetector(
                   onTap: widget.onTap,
                   child: Text(
                     "Register Now",
                     style: TextStyle(
-                      color: Colors.pink,
+                      color: Theme.of(context).colorScheme.inversePrimary,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                 ),
                 /* Change after themes are added */
-                /* Theme.of(context).colorScheme.inversePrimary */
+                /*  */
               ],
             ),
           ],
