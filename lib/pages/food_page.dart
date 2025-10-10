@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:grocery_shop/models/food.dart';
+import 'package:grocery_shop/models/restaurant.dart';
 
 class FoodPage extends StatefulWidget {
   final Food food;
-  const FoodPage({super.key, required this.food});
+  final Restaurant restaurant;
+  const FoodPage({super.key, required this.food, required this.restaurant});
 
   @override
   State<FoodPage> createState() => _FoodPageState();
@@ -44,7 +46,7 @@ class _FoodPageState extends State<FoodPage> {
             ),
             const SizedBox(height: 8),
             Text(
-              '\$${widget.food.price.toStringAsFixed(2)}',
+              '৳${widget.food.price.toStringAsFixed(2)} BDT',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
                     color: Theme.of(context).colorScheme.primary,
                   ),
@@ -69,7 +71,7 @@ class _FoodPageState extends State<FoodPage> {
                   Addon addon = widget.food.addons[index];
                   return CheckboxListTile(
                     title: Text(addon.name),
-                    subtitle: Text('\$${addon.price.toStringAsFixed(2)}'),
+                    subtitle: Text('৳${addon.price.toStringAsFixed(2)} BDT'),
                     value: selectedAddons[addon],
                     onChanged: (bool? value) {
                       setState(() {
@@ -85,7 +87,18 @@ class _FoodPageState extends State<FoodPage> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  // Add to cart logic here
+                  // Add to cart
+                  widget.restaurant.addToCart(widget.food, selectedAddons);
+                  
+                  // Show confirmation message
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('${widget.food.name} added to cart!'),
+                      duration: const Duration(seconds: 2),
+                    ),
+                  );
+                  
+                  // Go back to previous page
                   Navigator.pop(context);
                 },
                 style: ElevatedButton.styleFrom(
