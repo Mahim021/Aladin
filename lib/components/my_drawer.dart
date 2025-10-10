@@ -1,7 +1,7 @@
 import "package:flutter/material.dart";
 import "package:grocery_shop/components/my_drawer_tile.dart";
-import "package:grocery_shop/pages/Home_Page.dart";
 import "package:grocery_shop/pages/setting_page.dart";
+import "package:grocery_shop/pages/home_page.dart";
 
 class MyDrawer extends StatelessWidget {
   const MyDrawer({super.key});
@@ -37,6 +37,7 @@ class MyDrawer extends StatelessWidget {
                 MaterialPageRoute(builder: (context) => const HomePage()),
               ),
             }
+            
           ),
 
           //settings list tile
