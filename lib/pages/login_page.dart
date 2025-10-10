@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:grocery_shop/components/my_button.dart';
 import 'package:grocery_shop/components/my_textField.dart';
+import 'package:grocery_shop/services/auth/auth_service.dart';
 
 import 'Home_Page.dart';
 
@@ -18,19 +19,31 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-
   // login method
-  void login() {
-    
-    /*
+  void login() async {
+    final _authService = AuthService();
 
-     authentication code here
+    // try sign in
+    try {
+      await _authService.signInWithEmailPassword(
+        emailController.text,
+        passwordController.text,
+      );
+    } catch (e) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(title: Text(e.toString())),
+      );
+    }
+    // display any errors
+  }
 
-    */
-
-    // then navigate to home page
-    Navigator.push(context, 
-      MaterialPageRoute(builder: (context) => HomePage(),
+  void forgotPw() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: Theme.of(context).colorScheme.background,
+        title: const Text("User tapped forgot password."),
       ),
     );
   }
@@ -92,15 +105,18 @@ class _LoginPageState extends State<LoginPage> {
             // signin button
             MyButton(onTap: login, text: "Sign In"),
 
-
-
             const SizedBox(height: 25),
 
             // not a member, register now
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text("Not a member?", style: TextStyle(color: Theme.of(context).colorScheme.inversePrimary)),
+                Text(
+                  "Not a member?",
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.inversePrimary,
+                  ),
+                ),
                 /* Change after themes are added */
                 /*  */
                 const SizedBox(width: 4),
