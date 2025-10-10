@@ -1,25 +1,30 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:grocery_shop/auth/login_or_register.dart';
-import 'package:grocery_shop/themes/dark_mode.dart';
+import 'package:grocery_shop/services/auth/auth_gate.dart';
+import 'package:grocery_shop/firebase_options.dart';
 import 'package:grocery_shop/themes/light_mode.dart';
 
+void main() async {
+  // Required before any async operation in main()
+  WidgetsFlutterBinding.ensureInitialized();  
 
-void main() {
+  // Initialize Firebase
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: darkMode,
-      home: const LoginOrRegister(),
+      theme: lightMode,
+      home: const AuthGate(),
     );
   }
 }
-
-// Register page created

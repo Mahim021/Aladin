@@ -21,8 +21,6 @@ class _RegisterPageState extends State<RegisterPage> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.background,
 
-      /* Change after themes are added */
-      /*  */
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
