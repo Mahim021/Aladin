@@ -1,5 +1,6 @@
 import "package:flutter/material.dart";
 import "package:grocery_shop/components/my_drawer_tile.dart";
+import "package:grocery_shop/pages/Home_Page.dart";
 import "package:grocery_shop/pages/setting_page.dart";
 
 class MyDrawer extends StatelessWidget {
@@ -29,7 +30,13 @@ class MyDrawer extends StatelessWidget {
           MyDrawerTile(
             text: "H O M E",
             icon: Icons.home,
-            onTap: () => Navigator.pop(context),
+            onTap: () => {
+              Navigator.pop(context),
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const HomePage()),
+              ),
+            }
           ),
 
           //settings list tile
