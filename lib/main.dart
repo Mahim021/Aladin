@@ -1,14 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:grocery_shop/auth/login_or_register.dart';
-import 'package:grocery_shop/themes/dark_mode.dart';
-import 'package:grocery_shop/themes/light_mode.dart';
-import 'package:grocery_shop/themes/theme_provider.dart'; // <-- import ThemeProvider
+import 'package:grocery_shop/models/restaurant.dart';
+import 'package:grocery_shop/themes/theme_provider.dart';
 
 void main() {
   runApp(
-    ChangeNotifierProvider(
-      create: (context) => ThemeProvider(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => ThemeProvider()),
+        ChangeNotifierProvider(
+          create: (context) => Restaurant(
+            imagePath: 'assets/images/restaurant.jpg',
+            address: 'Kushtia, Bangladesh',
+            rating: 4.5,
+          ),
+        ),
+      ],
       child: const MyApp(),
     ),
   );

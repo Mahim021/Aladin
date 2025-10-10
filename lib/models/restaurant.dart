@@ -1,6 +1,7 @@
+import 'package:flutter/material.dart';
 import 'food.dart';
 
-class Restaurant {
+class Restaurant extends ChangeNotifier {
   final String imagePath;
   final String address;
   final double rating;
