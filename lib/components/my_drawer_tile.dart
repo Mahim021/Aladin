@@ -18,12 +18,12 @@ class MyDrawerTile extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(left: 25.0),
       child: ListTile(
+        leading: icon != null ? Icon(icon, color: Theme.of(context).colorScheme.inversePrimary) : null,
         title: Text(
           text,
           style: TextStyle(color: Theme.of(context).colorScheme.inversePrimary),
         ),
         onTap: onTap,
-
       ),
     );
   }

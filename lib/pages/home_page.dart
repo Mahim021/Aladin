@@ -5,6 +5,7 @@ import 'package:grocery_shop/components/my_description_box.dart';
 import 'package:grocery_shop/components/my_drawer.dart';
 import 'package:grocery_shop/components/my_silver_app_bar.dart';
 import 'package:grocery_shop/models/food.dart';
+import 'package:grocery_shop/pages/food_page.dart';
 import 'package:grocery_shop/models/restaurant.dart';
 import 'package:provider/provider.dart';
 
@@ -43,10 +44,58 @@ List<Widget> getFoodInThisCategory(List<Food> fullMenu){
       itemCount: foodsInCategory.length,
       itemBuilder: (context, index) {
         final food = foodsInCategory[index];
-        return ListTile(
-          title: Text(food.name),
-          subtitle: Text('৳${food.price.toStringAsFixed(2)} BDT'),
-          leading: Image.asset(food.imagePath, width: 50, height: 50, fit: BoxFit.cover),
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(12),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => FoodPage(
+                    food: food,
+                    restaurant: Provider.of<Restaurant>(context, listen: false),
+                  ),
+                ),
+              );
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.background,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black12,
+                    blurRadius: 4,
+                    offset: Offset(0, 2),
+                  ),
+                ],
+              ),
+              padding: const EdgeInsets.all(12),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(food.name, style: Theme.of(context).textTheme.titleMedium),
+                        const SizedBox(height: 2),
+                        Text('৳${food.price.toStringAsFixed(2)} BDT', style: Theme.of(context).textTheme.bodyMedium),
+                        const SizedBox(height: 6),
+                        Text(food.description, style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.grey[700])),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.asset(food.imagePath, width: 80, height: 80, fit: BoxFit.cover),
+                  ),
+                ],
+              ),
+            ),
+          ),
         );
       },
     );
