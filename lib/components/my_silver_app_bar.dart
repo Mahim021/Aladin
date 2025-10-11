@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:grocery_shop/pages/cart_page.dart';
-import 'package:grocery_shop/models/restaurant.dart';
-import 'package:provider/provider.dart';
+// Restaurant/provider not needed here anymore
 
 class MySliverAppBar extends StatelessWidget {
   final Widget child;
@@ -22,9 +21,7 @@ class MySliverAppBar extends StatelessWidget {
           onPressed: () {
             Navigator.of(context, rootNavigator: true).push(
               MaterialPageRoute(
-                builder: (context) => CartPage(
-                  restaurant: Provider.of<Restaurant>(context, listen: false),
-                ),
+                builder: (context) => const CartPage(),
               ),
             );
           },

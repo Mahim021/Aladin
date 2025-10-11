@@ -1,133 +1,98 @@
 import 'package:flutter/material.dart';
+import 'package:grocery_shop/components/my_button.dart';
+import 'package:grocery_shop/components/my_cart_tile.dart';
 import 'package:grocery_shop/models/restaurant.dart';
-import 'package:grocery_shop/models/cart_item.dart';
 import 'package:provider/provider.dart';
+import 'package:grocery_shop/pages/payment_page.dart';
 
+/// CartPage displays the current user's cart using Provider (Restaurant).
+/// This file was cleaned to remove merge artifacts and duplicate definitions.
 class CartPage extends StatelessWidget {
-  final Restaurant restaurant;
-  const CartPage({super.key, required this.restaurant});
+  const CartPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background, // static theme color
-      appBar: AppBar(
-        title: Text("Cart"),
-        backgroundColor: Theme.of(context).colorScheme.background,
-        foregroundColor: Theme.of(context).colorScheme.inversePrimary,
-        elevation: 0,
-      ),
-      body: Consumer<Restaurant>(
-        builder: (context, restaurant, child) {
-          final userCart = restaurant.cart;
-          if (userCart.isEmpty) {
-            return Center(child: Text("Your cart is empty."));
-          }
-          return Column(
+    return Consumer<Restaurant>(
+      builder: (context, restaurant, child) {
+        final userCart = restaurant.cart;
+
+        return Scaffold(
+          backgroundColor: Theme.of(context).colorScheme.background,
+          appBar: AppBar(
+            title: const Text('Cart'),
+            backgroundColor: Colors.transparent,
+            foregroundColor: Theme.of(context).colorScheme.inversePrimary,
+            elevation: 0,
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.delete_forever),
+                onPressed: userCart.isEmpty
+                    ? null
+                    : () async {
+                        final confirmed = await showDialog<bool>(
+                          context: context,
+                          builder: (context) => AlertDialog(
+                            title: const Text('Clear cart?'),
+                            content: const Text('This will remove all items from your cart.'),
+                            actions: [
+                              TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
+                              TextButton(onPressed: () => Navigator.pop(context, true), child: const Text('Yes')),
+                            ],
+                          ),
+                        );
+                        if (confirmed == true) restaurant.clearCart();
+                      },
+              )
+            ],
+          ),
+          body: Column(
             children: [
               Expanded(
-                child: ListView.builder(
-                  itemCount: userCart.length,
-                  itemBuilder: (context, index) {
-                    final CartItem item = userCart[index];
-                    return Card(
-                      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      child: Padding(
-                        padding: const EdgeInsets.all(12.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Image.asset(item.food.imagePath, width: 60, height: 60, fit: BoxFit.cover),
-                                const SizedBox(width: 12),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(item.food.name, style: Theme.of(context).textTheme.titleMedium),
-                                      Text('৳${item.food.price.toStringAsFixed(2)}', style: Theme.of(context).textTheme.bodyMedium),
-                                    ],
-                                  ),
-                                ),
-                                Row(
-                                  children: [
-                                    IconButton(
-                                      icon: const Icon(Icons.remove_circle_outline),
-                                      onPressed: () {
-                                        if (item.quantity > 1) {
-                                          restaurant.updateQuantity(item, item.quantity - 1);
-                                        } else {
-                                          restaurant.removeFromCart(item);
-                                        }
-                                      },
-                                    ),
-                                    Text('${item.quantity}', style: Theme.of(context).textTheme.titleMedium),
-                                    IconButton(
-                                      icon: const Icon(Icons.add_circle_outline),
-                                      onPressed: () {
-                                        restaurant.updateQuantity(item, item.quantity + 1);
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 8),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: item.selectedAddons.entries.any((e) => e.value)
-                                    ? SingleChildScrollView(
-                                        scrollDirection: Axis.horizontal,
-                                        child: Row(
-                                          children: item.selectedAddons.entries
-                                            .where((e) => e.value)
-                                            .map((e) => Padding(
-                                              padding: const EdgeInsets.only(right: 4.0),
-                                              child: Chip(
-                                                label: Text(
-                                                  '${e.key.name} (৳${e.key.price.toStringAsFixed(2)})',
-                                                  style: const TextStyle(fontSize: 12),
-                                                ),
-                                                visualDensity: VisualDensity.compact,
-                                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 0),
-                                              ),
-                                            ))
-                                            .toList(),
-                                        ),
-                                      )
-                                    : Container(),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
+                child: userCart.isEmpty
+                    ? Center(child: Text('Your cart is empty', style: Theme.of(context).textTheme.bodyLarge))
+                    : ListView.builder(
+                        padding: const EdgeInsets.all(12),
+                        itemCount: userCart.length,
+                        itemBuilder: (context, index) => MyCartTile(cartItem: userCart[index]),
                       ),
-                    );
-                  },
-                ),
               ),
               Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      "Total:",
-                      style: Theme.of(context).textTheme.titleMedium,
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('Total', style: Theme.of(context).textTheme.titleMedium),
+                        Text('includes add-ons', style: Theme.of(context).textTheme.bodySmall),
+                      ],
                     ),
-                    Text(
-                      '৳${restaurant.getTotalPrice().toStringAsFixed(2)}',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text('৳${restaurant.getTotalPrice().toStringAsFixed(2)}', style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold)),
+                        const SizedBox(height: 8),
+                        SizedBox(
+                          width: 180,
+                          child: MyButton(
+                            text: 'Checkout',
+                            onTap: userCart.isEmpty
+                                ? null
+                                : () {
+                                    Navigator.push(context, MaterialPageRoute(builder: (_) => const PaymentPage()));
+                                  },
+                          ),
+                        )
+                      ],
                     ),
                   ],
                 ),
-              ),
+              )
             ],
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }

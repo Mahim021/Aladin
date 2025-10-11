@@ -3,8 +3,7 @@ import "package:grocery_shop/components/my_drawer_tile.dart";
 import "package:grocery_shop/pages/setting_page.dart";
 import "package:grocery_shop/pages/home_page.dart";
 import "package:grocery_shop/pages/cart_page.dart";
-import "package:grocery_shop/models/restaurant.dart";
-import "package:provider/provider.dart";
+// restaurant provider no longer needed here
 
 class MyDrawer extends StatelessWidget {
   const MyDrawer({super.key});
@@ -63,9 +62,7 @@ class MyDrawer extends StatelessWidget {
               print('Cart button pressed');
               Navigator.of(context, rootNavigator: true).push(
                 MaterialPageRoute(
-                  builder: (context) => CartPage(
-                    restaurant: Provider.of<Restaurant>(context, listen: false),
-                  ),
+                  builder: (context) => const CartPage(),
                 ),
               );
             },
