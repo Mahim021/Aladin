@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:grocery_shop/pages/cart_page.dart';
+import 'package:grocery_shop/models/restaurant.dart';
+import 'package:provider/provider.dart';
 
 class MySliverAppBar extends StatelessWidget {
   final Widget child;
@@ -16,7 +19,15 @@ class MySliverAppBar extends StatelessWidget {
       actions: [
         // cart button
         IconButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.of(context, rootNavigator: true).push(
+              MaterialPageRoute(
+                builder: (context) => CartPage(
+                  restaurant: Provider.of<Restaurant>(context, listen: false),
+                ),
+              ),
+            );
+          },
           icon: const Icon(Icons.shopping_cart),
         ), // IconButton
       ],

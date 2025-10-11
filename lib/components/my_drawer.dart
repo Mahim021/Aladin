@@ -3,6 +3,9 @@ import "package:grocery_shop/components/my_drawer_tile.dart";
 import "package:grocery_shop/pages/setting_page.dart";
 import "package:grocery_shop/pages/home_page.dart";
 import "package:grocery_shop/services/auth/auth_service.dart";
+import "package:grocery_shop/pages/cart_page.dart";
+import "package:grocery_shop/models/restaurant.dart";
+import "package:provider/provider.dart";
 
 class MyDrawer extends StatelessWidget {
   const MyDrawer({super.key});
@@ -36,26 +39,41 @@ class MyDrawer extends StatelessWidget {
           MyDrawerTile(
             text: "H O M E",
             icon: Icons.home,
-            onTap: () => {
-              Navigator.pop(context),
+            onTap: () {
+              Navigator.pop(context);
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const HomePage()),
-              ),
-            }
-            
+              );
+            },
           ),
 
           //settings list tile
           MyDrawerTile(
             text: "S E T T I N G S",
             icon: Icons.settings,
-            onTap: () => {
-              Navigator.pop(context),
+            onTap: () {
+              Navigator.pop(context);
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => const SettingsPage()),
-              ),
+              );
+            },
+          ),
+
+          // cart list tile
+          MyDrawerTile(
+            text: "C A R T",
+            icon: Icons.shopping_cart,
+            onTap: () {
+              print('Cart button pressed');
+              Navigator.of(context, rootNavigator: true).push(
+                MaterialPageRoute(
+                  builder: (context) => CartPage(
+                    restaurant: Provider.of<Restaurant>(context, listen: false),
+                  ),
+                ),
+              );
             },
           ),
 

@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:grocery_shop/services/auth/auth_gate.dart';
 import 'package:grocery_shop/firebase_options.dart';
 import 'package:provider/provider.dart';
-import 'package:grocery_shop/themes/theme_provider.dart'; 
+import 'package:grocery_shop/models/restaurant.dart';
+import 'package:grocery_shop/themes/theme_provider.dart';
 
 void main() async {
   // Required before any async operation in main()
@@ -15,8 +16,17 @@ void main() async {
   );
 
   runApp(
-    ChangeNotifierProvider(
-      create: (context) => ThemeProvider(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (context) => ThemeProvider()),
+        ChangeNotifierProvider(
+          create: (context) => Restaurant(
+            imagePath: 'assets/images/restaurant.jpg',
+            address: 'Kushtia, Bangladesh',
+            rating: 4.5,
+          ),
+        ),
+      ],
       child: const MyApp(),
     ),
   );

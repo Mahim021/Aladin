@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:grocery_shop/models/food.dart';
 class MyTabBar extends StatelessWidget {
   final TabController tabController;
 
@@ -8,27 +8,20 @@ class MyTabBar extends StatelessWidget {
     required this.tabController,
   });
 
+  List<Tab> _buildCategoryTabs() {
+    return FoodCategory.values.map((category) {
+      return Tab(
+        text: category.name.toString().split('.').last,
+      );
+    }).toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
       child: TabBar(
         controller: tabController,
-        tabs: [
-          // 1st tab
-          Tab(
-            icon: Icon(Icons.home),
-          ), // Tab
-
-          // 2nd tab
-          Tab(
-            icon: Icon(Icons.settings),
-          ), // Tab
-
-          // 3rd Tab
-          Tab(
-            icon: Icon(Icons.person),
-          ), // Tab
-        ],
+        tabs: _buildCategoryTabs(),
       ), // TabBar
     ); // Container
   }
