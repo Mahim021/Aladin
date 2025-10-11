@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:grocery_shop/components/my_button.dart';
 import 'package:grocery_shop/components/my_textfield.dart';
 import 'package:grocery_shop/services/auth/auth_service.dart';
+import 'package:provider/provider.dart';
+import 'package:grocery_shop/models/restaurant.dart';
 
 class RegisterPage extends StatefulWidget {
   final void Function()? onTap;
@@ -27,10 +29,12 @@ class _RegisterPageState extends State<RegisterPage> {
     if (passwordController.text == confirmPasswordController.text) {
       // try creating user
       try {
-        await _authService.signUpWithEmailPassword(
+        final credential = await _authService.signUpWithEmailPassword(
           emailController.text,
           passwordController.text,
         );
+        final restaurant = Provider.of<Restaurant>(context, listen: false);
+        await restaurant.setUser(credential.user?.uid);
       } catch (e) {
         // show error message
         showDialog(

@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:grocery_shop/components/my_receipt.dart';
 import 'package:grocery_shop/models/restaurant.dart';
 import 'package:grocery_shop/services/database/firestore.dart';
+import 'package:grocery_shop/pages/home_page.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class DeliveryProgressPage extends StatefulWidget {
   const DeliveryProgressPage({super.key});
@@ -12,16 +14,28 @@ class DeliveryProgressPage extends StatefulWidget {
 }
 
 class _DeliveryProgressPageState extends State<DeliveryProgressPage> {
-  // get access to firestore service
   FirestoreService db = FirestoreService();
+  String? _receipt;
 
   @override
   void initState() {
     super.initState();
-    
-    // Save order to database when page loads
-    String receipt = context.read<Restaurant>().displayCartReceipt();
-    db.saveOrderToDatabase(receipt);
+    Future.delayed(Duration.zero, () async {
+      final restaurant = context.read<Restaurant>();
+      final receipt = restaurant.displayCartReceipt();
+      setState(() {
+        _receipt = receipt;
+      });
+      final userId = await _getUserId();
+      final cartItems = restaurant.cart.map((item) => restaurant.cartItemToMap(item)).toList();
+      await db.saveOrderToDatabase(receipt, userId, cartItems);
+      await restaurant.clearCart();
+    });
+  }
+
+  Future<String> _getUserId() async {
+    final user = FirebaseAuth.instance.currentUser;
+    return user?.uid ?? 'unknown';
   }
 
   @override
@@ -54,7 +68,7 @@ class _DeliveryProgressPageState extends State<DeliveryProgressPage> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     padding: const EdgeInsets.all(25),
-                    child: const MyReceipt(),
+                    child: MyReceipt(receipt: _receipt ?? ""),
                   ),
                   const SizedBox(height: 25),
                   const Text(
@@ -62,6 +76,32 @@ class _DeliveryProgressPageState extends State<DeliveryProgressPage> {
                     style: TextStyle(fontSize: 14),
                   ),
                   const SizedBox(height: 30),
+
+                  // Back to Home button
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        // Navigate to home page and clear all previous routes
+                        Navigator.of(context).pushAndRemoveUntil(
+                          MaterialPageRoute(builder: (context) => const HomePage()),
+                          (Route<dynamic> route) => false,
+                        );
+                      },
+                      icon: const Icon(Icons.home, size: 20),
+                      label: const Text("Back to Home"),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Theme.of(context).colorScheme.primary,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 25),
 
                   // Receipt action buttons
                   Row(

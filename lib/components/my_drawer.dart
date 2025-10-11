@@ -1,16 +1,23 @@
 import "package:flutter/material.dart";
 import "package:grocery_shop/components/my_drawer_tile.dart";
+import 'package:grocery_shop/services/auth/auth_gate.dart';
 import "package:grocery_shop/pages/setting_page.dart";
 import "package:grocery_shop/pages/home_page.dart";
 import "package:grocery_shop/services/auth/auth_service.dart";
 import "package:grocery_shop/pages/cart_page.dart";
+import 'package:grocery_shop/pages/order_history_page.dart';
+import 'package:provider/provider.dart';
+import 'package:grocery_shop/models/restaurant.dart';
 // restaurant provider no longer needed here
 
 class MyDrawer extends StatelessWidget {
   const MyDrawer({super.key});
 
-  void logout() {
+  void logout(BuildContext context) async {
     final authService = AuthService();
+    // Clear cart storage for current user
+    final restaurant = Provider.of<Restaurant>(context, listen: false);
+    await restaurant.clearCartStorage();
     authService.signOut();
   }
 
@@ -60,6 +67,19 @@ class MyDrawer extends StatelessWidget {
             },
           ),
 
+          // order history list tile
+          MyDrawerTile(
+            text: "O R D E R   H I S T O R Y",
+            icon: Icons.history,
+            onTap: () {
+              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const OrderHistoryPage()),
+              );
+            },
+          ),
+
           // cart list tile
           MyDrawerTile(
             text: "C A R T",
@@ -78,11 +98,11 @@ class MyDrawer extends StatelessWidget {
 
           // logout list tile
           MyDrawerTile(
-            text: "L O G O U T", 
-            icon: Icons.logout, 
+            text: "L O G O U T",
+            icon: Icons.logout,
             onTap: () {
-              logout();
-              Navigator.pop(context);
+              logout(context);
+              Navigator.of(context).popUntil((route) => route.isFirst);
             },
           ),
 

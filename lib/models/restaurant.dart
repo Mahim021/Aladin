@@ -2,13 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'food.dart';
 import 'cart_item.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Restaurant extends ChangeNotifier {
   final String imagePath;
   final String address;
   final double rating;
   final List<Food> menu;
-  final List<CartItem> cart = [];
+  List<CartItem> cart = [];
+  String? _userId;
 
   // A sample menu used when no menu is provided.
   static final List<Food> sampleMenu = [
@@ -76,25 +80,132 @@ class Restaurant extends ChangeNotifier {
     List<Food>? menu,
   }) : menu = menu ?? sampleMenu;
 
+  // Set current user and load their cart from Firestore
+  Future<void> setUser(String? userId) async {
+    _userId = userId;
+    await _loadCart();
+    await _loadCartFromFirestore();
+    notifyListeners();
+  }
+
+  // Save cart to shared preferences
+  Future<void> _saveCart() async {
+    if (_userId == null) return;
+    final prefs = await SharedPreferences.getInstance();
+  final cartJson = jsonEncode(cart.map((item) => cartItemToMap(item)).toList());
+    await prefs.setString('cart_${_userId}', cartJson);
+  }
+
+  // Load cart from shared preferences
+  Future<void> _loadCart() async {
+    if (_userId == null) return;
+    final prefs = await SharedPreferences.getInstance();
+    final cartJson = prefs.getString('cart_${_userId}');
+    if (cartJson != null) {
+      final List decoded = jsonDecode(cartJson);
+      cart = decoded.map<CartItem>((item) => _cartItemFromMap(item)).toList();
+    } else {
+      cart = [];
+    }
+  }
+
+  // Save cart to Firestore
+  Future<void> _saveCartToFirestore() async {
+    if (_userId == null) return;
+  final cartData = cart.map((item) => cartItemToMap(item)).toList();
+    await FirebaseFirestore.instance.collection('carts').doc(_userId).set({
+      'items': cartData,
+    });
+  }
+
+  // Load cart from Firestore
+  Future<void> _loadCartFromFirestore() async {
+    if (_userId == null) return;
+    final doc = await FirebaseFirestore.instance.collection('carts').doc(_userId).get();
+    if (doc.exists && doc.data()?['items'] != null) {
+      final List decoded = doc.data()!['items'];
+      cart = decoded.map<CartItem>((item) => _cartItemFromMap(item)).toList();
+    }
+  }
+
+  // Clear cart in Firestore
+  Future<void> _clearCartInFirestore() async {
+    if (_userId == null) return;
+    await FirebaseFirestore.instance.collection('carts').doc(_userId).delete();
+  }
+
+  // Clear cart from memory, local storage, and Firestore
+  Future<void> clearCart() async {
+    cart.clear();
+    await _saveCart();
+    await _clearCartInFirestore();
+    notifyListeners();
+  }
+
+  // Remove cart from storage only (on logout)
+  Future<void> clearCartStorage() async {
+    if (_userId == null) return;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('cart_${_userId}');
+  }
+
+  // Convert CartItem to Map for storage
+  Map<String, dynamic> cartItemToMap(CartItem item) {
+    return {
+      'foodName': item.food.name,
+      'foodPrice': item.food.price,
+      'foodCategory': item.food.category.index,
+      'foodImagePath': item.food.imagePath,
+      'foodDescription': item.food.description,
+      'quantity': item.quantity,
+      'selectedAddons': item.selectedAddons.map((addon, selected) => MapEntry(addon.name, selected)),
+    };
+  }
+
+  // Convert Map to CartItem
+  CartItem _cartItemFromMap(Map item) {
+    final food = Food(
+      name: item['foodName'],
+      imagePath: item['foodImagePath'],
+      description: item['foodDescription'],
+      price: item['foodPrice'],
+      category: FoodCategory.values[item['foodCategory']],
+      addons: [], // Addons not needed for cart display
+    );
+    final selectedAddons = <Addon, bool>{};
+    if (item['selectedAddons'] != null) {
+      (item['selectedAddons'] as Map<String, dynamic>).forEach((name, selected) {
+        selectedAddons[Addon(name: name, price: 0)] = selected;
+      });
+    }
+    return CartItem(food: food, selectedAddons: selectedAddons, quantity: item['quantity']);
+  }
+
   // Add to cart
-  void addToCart(Food food, Map<Addon, bool> selectedAddons) {
+  Future<void> addToCart(Food food, Map<Addon, bool> selectedAddons) async {
     CartItem newItem = CartItem(
       food: food,
       selectedAddons: selectedAddons,
     );
     cart.add(newItem);
+    await _saveCart();
+    await _saveCartToFirestore();
     notifyListeners();
   }
 
   // Remove from cart
-  void removeFromCart(CartItem cartItem) {
+  Future<void> removeFromCart(CartItem cartItem) async {
     cart.remove(cartItem);
+    await _saveCart();
+    await _saveCartToFirestore();
     notifyListeners();
   }
 
   // Update cart item quantity
-  void updateQuantity(CartItem cartItem, int newQuantity) {
+  Future<void> updateQuantity(CartItem cartItem, int newQuantity) async {
     cartItem.quantity = newQuantity;
+    await _saveCart();
+    await _saveCartToFirestore();
     notifyListeners();
   }
 
@@ -111,12 +222,6 @@ class Restaurant extends ChangeNotifier {
   // Get cart item count
   int getCartItemCount() {
     return cart.length;
-  }
-
-  // Clear cart
-  void clearCart() {
-    cart.clear();
-    notifyListeners();
   }
 
   // Format double value into money

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:grocery_shop/components/my_button.dart';
 import 'package:grocery_shop/components/my_textField.dart';
 import 'package:grocery_shop/services/auth/auth_service.dart';
+import 'package:provider/provider.dart';
+import 'package:grocery_shop/models/restaurant.dart';
 
 class LoginPage extends StatefulWidget {
   final void Function()? onTap;
@@ -20,20 +22,20 @@ class _LoginPageState extends State<LoginPage> {
   // login method
   void login() async {
     final _authService = AuthService();
-
-    // try sign in
     try {
-      await _authService.signInWithEmailPassword(
+      final credential = await _authService.signInWithEmailPassword(
         emailController.text,
         passwordController.text,
       );
+      // Set user for cart persistence
+  final restaurant = Provider.of<Restaurant>(context, listen: false);
+  await restaurant.setUser(credential.user?.uid);
     } catch (e) {
       showDialog(
         context: context,
         builder: (context) => AlertDialog(title: Text(e.toString())),
       );
     }
-    // display any errors
   }
 
   void forgotPw() {
