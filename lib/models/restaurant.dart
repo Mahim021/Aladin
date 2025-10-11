@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'food.dart';
 import 'cart_item.dart';
 
@@ -102,6 +103,11 @@ class Restaurant extends ChangeNotifier {
     return cart.fold(0.0, (sum, item) => sum + item.totalPrice);
   }
 
+  // Get total item count
+  int getTotalItemCount() {
+    return cart.fold(0, (sum, item) => sum + item.quantity);
+  }
+
   // Get cart item count
   int getCartItemCount() {
     return cart.length;
@@ -111,5 +117,51 @@ class Restaurant extends ChangeNotifier {
   void clearCart() {
     cart.clear();
     notifyListeners();
+  }
+
+  // Format double value into money
+  String _formatPrice(double price) {
+    return '\$${price.toStringAsFixed(2)}';
+  }
+
+  // Format addons
+  String _formatAddons(Map<Addon, bool> selectedAddons) {
+    List<String> addonNames = [];
+    for (var entry in selectedAddons.entries) {
+      if (entry.value) {
+        addonNames.add(entry.key.name);
+      }
+    }
+    return addonNames.isEmpty ? '' : 'Add-ons: ${addonNames.join(', ')}';
+  }
+
+  // Generate a receipt
+  String displayCartReceipt() {
+    final receipt = StringBuffer();
+    receipt.writeln("Here's your receipt.");
+    receipt.writeln();
+
+    // Format the date to include up to seconds only
+    String formattedDate = DateFormat('yyyy-MM-dd HH:mm:ss').format(DateTime.now());
+
+    receipt.writeln(formattedDate);
+    receipt.writeln();
+    receipt.writeln("----------");
+
+    for (final cartItem in cart) {
+      receipt.writeln(
+          "${cartItem.quantity} x ${cartItem.food.name} - ${_formatPrice(cartItem.food.price)}");
+      if (cartItem.selectedAddons.isNotEmpty) {
+        receipt.writeln("   ${_formatAddons(cartItem.selectedAddons)}");
+      }
+      receipt.writeln();
+    }
+
+    receipt.writeln("----------");
+    receipt.writeln();
+    receipt.writeln("Total Items: ${getTotalItemCount()}");
+    receipt.writeln("Total Price: ${_formatPrice(getTotalPrice())}");
+
+    return receipt.toString();
   }
 }
